@@ -1,0 +1,27 @@
+{
+  "name": "sega-bass-jr",
+  "version": "1.0.0",
+  "main": "dist/bot.js",
+  "scripts": {
+    "start": "node .",
+    "start-dev": "node --experimental-loader ./config-dotenv.js .",
+    "build": "npx tsc -w"
+  },
+  "author": "LoadXBare",
+  "type": "module",
+  "devDependencies": {
+    "@types/node-schedule": "^2.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.33.0",
+    "@typescript-eslint/parser": "^5.33.0",
+    "eslint": "^8.22.0",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "@sapphire/stopwatch": "^1.4.1",
+    "dayjs": "^1.11.5",
+    "discord.js": "^14.2.0",
+    "dotenv": "^16.0.2",
+    "mongoose": "^6.5.2",
+    "node-schedule": "^2.1.0"
+  }
+}
