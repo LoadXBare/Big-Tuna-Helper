@@ -1,10 +1,8 @@
-import dayjs from 'dayjs';
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, ComponentType, EmbedBuilder, Message, time, User } from 'discord.js';
-import schedule from 'node-schedule';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Message, User } from 'discord.js';
 import { database } from '../../api/mongo.js';
 import { BotColors } from '../constants.js';
 import { initialiseDatabaseUser } from './initialise-database-user.js';
-import { postFishReminder } from './post-fish-reminder.js';
+import { sleep } from './sleep.js';
 
 export const handleFish = async (message: Message, userWhoFished: User): Promise<void> => {
 	await initialiseDatabaseUser(userWhoFished.id);
@@ -22,17 +20,17 @@ export const handleFish = async (message: Message, userWhoFished: User): Promise
 		.setColor(BotColors.Neutral);
 	const fishReminderButtons = new ActionRowBuilder<ButtonBuilder>().setComponents(
 		new ButtonBuilder()
-			.setCustomId('Yes')
+			.setCustomId(JSON.stringify({ type: 'startFishTimer', userID: userWhoFished.id }))
 			.setEmoji('👍')
 			.setLabel('Start')
 			.setStyle(ButtonStyle.Success),
 		new ButtonBuilder()
-			.setCustomId('No')
+			.setCustomId(JSON.stringify({ type: 'dontStartFishTimer', userID: userWhoFished.id }))
 			.setEmoji('👎')
 			.setLabel('No')
 			.setStyle(ButtonStyle.Danger),
 		new ButtonBuilder()
-			.setCustomId('Restart')
+			.setCustomId(JSON.stringify({ type: 'restartFishTimer', userID: userWhoFished.id, disableButtons: true }))
 			.setEmoji('🔁')
 			.setLabel('Restart')
 			.setStyle(ButtonStyle.Primary)
@@ -40,65 +38,11 @@ export const handleFish = async (message: Message, userWhoFished: User): Promise
 
 	const reply = await message.channel.send({ embeds: [fishReminderEmbed], components: [fishReminderButtons] });
 
-	const filter = (interaction: ButtonInteraction): boolean => {
-		return interaction.user.id === userWhoFished.id;
-	};
-	const buttonChoice = await message.channel.awaitMessageComponent({ componentType: ComponentType.Button, filter: filter, idle: 30_000 })
-		.catch(() => {
-			const fishReminderTimedoutEmbed = EmbedBuilder.from(fishReminderEmbed)
-				.setFooter({ text: 'Timedout.' })
-				.setColor(BotColors.Timeout);
+	await sleep(30_000);
 
-			reply.edit({ embeds: [fishReminderTimedoutEmbed], components: [] });
-		});
+	const fishReminderTimedoutEmbed = EmbedBuilder.from(fishReminderEmbed)
+		.setFooter({ text: 'Timedout.' })
+		.setColor(BotColors.Timeout);
 
-	if (typeof buttonChoice === 'undefined') {
-		return;
-	}
-
-	if (buttonChoice.customId === 'No') {
-		const fishReminderCancelledEmbed = EmbedBuilder.from(fishReminderEmbed)
-			.setFooter({ text: 'Okay, timer not started.' })
-			.setColor(BotColors.Negative);
-		reply.edit({ embeds: [fishReminderCancelledEmbed], components: [] });
-		return;
-	}
-
-	const fishReminderEndTimestamp = dayjs().valueOf() + userConfig.timerCooldown * 60 * 1000;
-	const fishReminderEndDate = dayjs(fishReminderEndTimestamp).toDate();
-
-	if (buttonChoice.customId === 'Yes' && userConfig.timerActive) {
-		const fishReminderActiveEmbed = EmbedBuilder.from(fishReminderEmbed)
-			.setDescription(`Oops! Looks like you already have an active timer.\
-				\n*Expires ${time(Math.round(userConfig.timerEndTimestamp / 1000), 'R')}*`)
-			.setColor(BotColors.Negative);
-
-		reply.edit({ embeds: [fishReminderActiveEmbed], components: [] });
-		return;
-	}
-
-	let restartedText = '';
-	if (buttonChoice.customId === 'Restart' && userConfig.timerActive) {
-		schedule.scheduledJobs[userWhoFished.id].cancel();
-		restartedText = 're';
-	}
-
-	schedule.scheduleJob(userWhoFished.id, fishReminderEndDate, () => {
-		postFishReminder(message.client, userWhoFished.id, message.channelId, false);
-	});
-
-	await database.userConfig.updateOne({
-		userID: userWhoFished.id
-	}, {
-		channelID: message.channelId,
-		timerActive: true,
-		timerEndTimestamp: fishReminderEndTimestamp
-	});
-
-	const fishReminderStartedEmbed = EmbedBuilder.from(fishReminderEmbed)
-		.setDescription(`**Timer ${restartedText}started!**\
-		\nI will DM you when your timer expires ${time(Math.round(fishReminderEndTimestamp / 1000), 'R')}.`)
-		.setColor(BotColors.Positive);
-
-	reply.edit({ embeds: [fishReminderStartedEmbed], components: [] });
+	reply.edit({ embeds: [fishReminderTimedoutEmbed], components: [] });
 };
