@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, Message, User } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonComponent, ButtonStyle, EmbedBuilder, Message, User } from 'discord.js';
 import { database } from '../../api/mongo.js';
 import { BotColors } from '../constants.js';
 import { initialiseDatabaseUser } from './initialise-database-user.js';
@@ -39,6 +39,11 @@ export const handleFish = async (message: Message, userWhoFished: User): Promise
 	const reply = await message.channel.send({ embeds: [fishReminderEmbed], components: [fishReminderButtons] });
 
 	await sleep(30_000);
+
+	const messageButtons = reply.components.at(0).components as Array<ButtonComponent>;
+	if (messageButtons.at(0).disabled) {
+		return;
+	}
 
 	const fishReminderTimedoutEmbed = EmbedBuilder.from(fishReminderEmbed)
 		.setFooter({ text: 'Timedout.' })

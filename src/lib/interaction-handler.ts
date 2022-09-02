@@ -4,10 +4,10 @@ import { buttonInteractions } from '../button_interactions/index.js';
 export const handleInteraction = (interaction: Interaction): void => {
 	if (interaction.isButton) {
 		const buttonInteract = interaction as ButtonInteraction;
-		const type = JSON.parse(buttonInteract.customId).type;
+		const interactionName = JSON.parse(buttonInteract.customId).type;
 
-		if (type in buttonInteractions) {
-			buttonInteractions[type](buttonInteract);
+		if (interactionName in buttonInteractions) {
+			buttonInteractions[interactionName](buttonInteract);
 		}
 	}
 };
