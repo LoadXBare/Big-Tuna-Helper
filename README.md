@@ -1,4 +1,4 @@
-# Sega Bass Jr - Dev Branch
+# Sega Bass Jr
 A Discord bot utilising the Discord.JS library with the aim of expanding the functionality of Huntail's [Big Tuna Discord Bot](https://bigtuna.xyz) by adding various quality of life features, these include:
 - Automatic fishing timer prompts
 - Bait Shop evaluator
