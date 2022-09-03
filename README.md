@@ -1,9 +1,9 @@
 # Sega Bass Jr
-A Discord bot written in JavaScript using the Discord.JS library.
-
-This bot extends the functionality of Huntail's [Big Tuna Discord Bot](https://bigtuna.xyz) by adding various new features.  
-(Some features were added purely as a gimmick and don't provide any helpful/useful data)
+A Discord bot utilising the Discord.JS library with the aim of expanding the functionality of Huntail's [Big Tuna Discord Bot](https://bigtuna.xyz) by adding various quality of life features, these include:
+- Automatic fishing timer prompts
+- Bait Shop evaluator
+- Bait inventory evaluator
 
 ---
 
-[![wakatime](https://wakatime.com/badge/user/87603537-98b6-4d98-bccb-d715695da413/project/32cd03e8-4bde-4640-8493-b8d10825a14f.svg?style=for-the-badge)](https://wakatime.com/@87603537-98b6-4d98-bccb-d715695da413/projects/pbaruwahdq?start=2022-01-27&end=2022-02-02)
+[![wakatime](https://wakatime.com/badge/user/87603537-98b6-4d98-bccb-d715695da413/project/d55a367d-5b1a-40e0-8f21-61078597f1e2.svg?style=for-the-badge)](https://wakatime.com/@LoadXBare/projects/bshirfsylx)

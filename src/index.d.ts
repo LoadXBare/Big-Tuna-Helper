@@ -20,3 +20,7 @@ interface BaitRatings {
 interface BaitDescriptions {
 	[bait: string]: string
 }
+
+interface ButtonInteractions {
+	[interaction: string]: Function
+}

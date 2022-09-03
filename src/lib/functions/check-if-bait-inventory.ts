@@ -9,10 +9,20 @@ export const checkIfBaitInventory = async (message: Message): Promise<void> => {
 		return;
 	}
 
-	await sleep(500);
-	const fetchedMessage = await message.fetch();
+	const oldEmbedLength = message.embeds.length;
+	const oldContentLength = message.content.length;
+	let loopNumber = 0;
 
-	const messageContainsEmbed = typeof fetchedMessage.embeds.at(0) !== 'undefined';
+	do {
+		sleep(100);
+		await message.fetch();
+
+		if ((loopNumber += 1) >= 50) {
+			break;
+		}
+	} while (oldEmbedLength === message.embeds.length && oldContentLength === message.content.length);
+
+	const messageContainsEmbed = message.embeds.length !== 0;
 	if (!messageContainsEmbed) {
 		return;
 	}

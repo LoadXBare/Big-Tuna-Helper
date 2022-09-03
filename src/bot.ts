@@ -5,6 +5,7 @@ import { BotPrefix, botToken } from './lib/constants.js';
 import { checkIfBaitInventory } from './lib/functions/check-if-bait-inventory.js';
 import { checkIfBaitShop } from './lib/functions/check-if-bait-shop.js';
 import { checkIfMemberFished } from './lib/functions/check-if-fished.js';
+import { handleInteraction } from './lib/interaction-handler.js';
 import { startScheduler } from './lib/scheduler.js';
 
 const client = new Client({
@@ -26,6 +27,10 @@ client.on('messageCreate', (message) => {
 	checkIfMemberFished(message);
 	checkIfBaitShop(message);
 	checkIfBaitInventory(message);
+});
+
+client.on('interactionCreate', (interaction) => {
+	handleInteraction(interaction);
 });
 
 client.on('ready', async () => {
